@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>P+S Connection Cards</title>
+<!-- PWA / Home Screen -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="P+S Cards">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e0c18">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230e0c18'/%3E%3Cellipse cx='72' cy='100' rx='42' ry='38' fill='%235b8cff' transform='rotate(5,72,100)'/%3E%3Ccircle cx='62' cy='92' r='5' fill='%230a0a0a'/%3E%3Ccircle cx='82' cy='91' r='5' fill='%230a0a0a'/%3E%3Cpath d='M61 108 Q72 118 83 108' fill='none' stroke='%230a0a0a' stroke-width='4' stroke-linecap='round'/%3E%3Cellipse cx='126' cy='106' rx='28' ry='26' fill='%23ffd84a' transform='rotate(-8,126,106)'/%3E%3Ccircle cx='118' cy='99' r='4' fill='%230a0a0a'/%3E%3Ccircle cx='132' cy='100' r='4' fill='%230a0a0a'/%3E%3Cpath d='M117 112 Q125 120 134 112' fill='none' stroke='%230a0a0a' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -569,7 +576,7 @@ let galleryFlipped = new Set();
 let drawPool = [];
 let drawOrder = [];
 let drawPos = 0;
-let drawFlipped = true; // true = showing back (face down)
+let drawFlipped = false; // false = showing front (revealed) by default
 
 // ── UTILS ──
 function shuffle(arr) {
@@ -673,24 +680,25 @@ function buildCardHTML(cardData, isFlipped, sizeClass) {
         </div>
       </div>
       <!-- Back face -->
-      <div class="card-face card-back">
-        <svg width="60%" height="auto" viewBox="0 0 64 44" style="overflow:visible;max-width:120px">
+      <div class="card-face card-back" style="background:#ffffff;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px">
+        <div style="position:absolute;inset:12px;border-radius:10px;border:0.5px solid rgba(0,0,0,.08);pointer-events:none"></div>
+        <svg width="52%" height="auto" viewBox="0 0 64 44" style="overflow:visible;max-width:110px">
           <defs>
-            <radialGradient id="b1c" cx="35%" cy="30%"><stop offset="0%" stop-color="white"/><stop offset="100%" stop-color="transparent"/></radialGradient>
-            <radialGradient id="b2c" cx="35%" cy="30%"><stop offset="0%" stop-color="white"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+            <radialGradient id="b1c-${cardData.id}" cx="35%" cy="30%"><stop offset="0%" stop-color="white"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+            <radialGradient id="b2c-${cardData.id}" cx="35%" cy="30%"><stop offset="0%" stop-color="white"/><stop offset="100%" stop-color="transparent"/></radialGradient>
           </defs>
           <ellipse cx="22" cy="24" rx="19" ry="17" fill="#5b8cff" transform="rotate(5,22,24)"/>
-          <ellipse cx="22" cy="24" rx="19" ry="17" fill="url(#b1c)" opacity=".3" transform="rotate(5,22,24)"/>
+          <ellipse cx="22" cy="24" rx="19" ry="17" fill="url(#b1c-${cardData.id})" opacity=".3" transform="rotate(5,22,24)"/>
           <circle cx="18" cy="21" r="2" fill="#0a0a0a"/>
           <circle cx="28" cy="20.5" r="2" fill="#0a0a0a"/>
           <path d="M18 27 Q23 32 28 27" fill="none" stroke="#0a0a0a" stroke-width="1.8" stroke-linecap="round"/>
           <ellipse cx="46" cy="27" rx="13" ry="12" fill="#ffd84a" transform="rotate(-8,46,27)"/>
-          <ellipse cx="46" cy="27" rx="13" ry="12" fill="url(#b2c)" opacity=".25" transform="rotate(-8,46,27)"/>
+          <ellipse cx="46" cy="27" rx="13" ry="12" fill="url(#b2c-${cardData.id})" opacity=".25" transform="rotate(-8,46,27)"/>
           <circle cx="41" cy="24.5" r="1.7" fill="#0a0a0a"/>
           <circle cx="48" cy="25" r="1.7" fill="#0a0a0a"/>
           <path d="M41 30 Q45 34 49 30" fill="none" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
-        <div class="card-back-label">P+S</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:${metaSize};letter-spacing:0.35em;color:rgba(0,0,0,.4);text-transform:uppercase">P+S CARDS</div>
       </div>
     </div>`;
 }
@@ -711,11 +719,11 @@ function initDraw() {
   drawPool = getFilteredCards();
   drawOrder = shuffle(drawPool.map((_, i) => i));
   drawPos = 0;
-  drawFlipped = true;
+  drawFlipped = false; // false = front showing (revealed) by default
 }
 
 function renderDraw() {
-  if (!drawPool.length || drawPool !== getFilteredCards()) initDraw();
+  if (!drawPool.length) initDraw();
   const card = drawPool[drawOrder[drawPos]];
   if (!card) return;
 
@@ -735,7 +743,7 @@ function renderDraw() {
   }
 
   wrapper.innerHTML = `<div class="anim-deal">${buildCardHTML(card, drawFlipped, 'large')}</div>`;
-  document.getElementById('btn-reveal').textContent = drawFlipped ? '✦ REVEAL' : '↻ HIDE';
+  document.getElementById('btn-reveal').textContent = drawFlipped ? '✦ REVEAL' : '↻ FLIP';
   document.getElementById('draw-counter').textContent =
     String(drawPos + 1).padStart(2, '0') + ' / ' + String(drawPool.length).padStart(2, '0');
 }
@@ -744,17 +752,17 @@ function toggleReveal() {
   drawFlipped = !drawFlipped;
   const card = document.querySelector('#card-wrapper .card');
   if (card) card.classList.toggle('flipped', drawFlipped);
-  document.getElementById('btn-reveal').textContent = drawFlipped ? '✦ REVEAL' : '↻ HIDE';
+  document.getElementById('btn-reveal').textContent = drawFlipped ? '✦ REVEAL' : '↻ FLIP';
 }
 
 function drawNext() {
-  drawFlipped = true;
+  drawFlipped = false; // always reveal on next card
   drawPos = (drawPos + 1) % drawPool.length;
   renderDraw();
 }
 
 function reshuffle() {
-  drawFlipped = true;
+  drawFlipped = false;
   drawOrder = shuffle(drawPool.map((_, i) => i));
   drawPos = 0;
   renderDraw();
@@ -899,6 +907,32 @@ function buildCatFilters() {
 // ── INIT ──
 buildFilters();
 setMode('gallery');
+
+// ── SERVICE WORKER (offline cache) ──
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE = 'ps-cards-v1';
+    const FONTS = [
+      'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap'
+    ];
+    self.addEventListener('install', e => {
+      e.waitUntil(caches.open(CACHE).then(c => c.addAll(FONTS).catch(() => {})));
+      self.skipWaiting();
+    });
+    self.addEventListener('fetch', e => {
+      e.respondWith(
+        caches.match(e.request).then(r => r || fetch(e.request).then(res => {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+          return res;
+        }).catch(() => new Response('', { status: 408 })))
+      );
+    });
+  `;
+  const blob = new Blob([swCode], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(() => {});
+}
 </script>
 </body>
 </html>
