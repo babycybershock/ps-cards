@@ -1109,40 +1109,96 @@ function blobKiss() {
   blue.style.animation = 'none';
   yellow.style.animation = 'none';
 
-  // Move toward each other
-  blue.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-  yellow.style.transition = 'transform 0.35s cubic-bezier(.4,0,.2,1)';
-  blue.style.transform = 'translateX(10px) scale(1.08)';
-  yellow.style.transform = 'translateX(-8px) scale(1.05)';
+  // Create fullscreen overlay
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position:fixed;inset:0;z-index:9999;
+    background:rgba(14,12,24,0);
+    display:flex;align-items:center;justify-content:center;
+    transition:background 0.4s ease;
+    cursor:pointer;
+  `;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.style.background = 'rgba(14,12,24,0.85)');
 
-  // Hold the kiss
-  setTimeout(() => {
-    // Little heart pops up
-    const svg = document.getElementById('blob-logo');
-    const heart = document.createElementNS('http://www.w3.org/2000/svg','text');
-    heart.setAttribute('x', '34');
-    heart.setAttribute('y', '8');
-    heart.setAttribute('text-anchor', 'middle');
-    heart.setAttribute('font-size', '10');
-    heart.setAttribute('fill', '#ff6b9d');
-    heart.setAttribute('style', 'animation:heartPop 0.8s ease both');
-    heart.textContent = '♡';
-    svg.appendChild(heart);
-    setTimeout(() => heart.remove(), 800);
-  }, 300);
+  // Big blob SVG in the centre
+  const vw = Math.min(window.innerWidth, 500);
+  const sz = Math.round(vw * 0.72);
+  overlay.innerHTML = `
+    <svg id="kiss-stage" width="${sz}" height="${Math.round(sz*0.7)}"
+         viewBox="0 0 200 140" style="overflow:visible">
+      <defs>
+        <radialGradient id="kg1" cx="35%" cy="30%">
+          <stop offset="0%" stop-color="white"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+        <radialGradient id="kg2" cx="35%" cy="30%">
+          <stop offset="0%" stop-color="white"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+      </defs>
+      <!-- Blue blob starts left, bounces in -->
+      <g id="ks-blue" style="transform-origin:60px 70px;transform:translate(-160px,0) scale(0.4);transition:transform 0.55s cubic-bezier(.2,.8,.3,1.05)">
+        <ellipse cx="60" cy="70" rx="52" ry="46" fill="#5b8cff" transform="rotate(5,60,70)"/>
+        <ellipse cx="60" cy="70" rx="52" ry="46" fill="url(#kg1)" opacity=".3" transform="rotate(5,60,70)"/>
+        <circle cx="47" cy="62" r="5.5" fill="#0a0a0a"/>
+        <circle cx="72" cy="61" r="5.5" fill="#0a0a0a"/>
+        <path d="M47 80 Q60 92 73 80" fill="none" stroke="#0a0a0a" stroke-width="4.5" stroke-linecap="round"/>
+      </g>
+      <!-- Yellow blob starts right, bounces in -->
+      <g id="ks-yellow" style="transform-origin:140px 75px;transform:translate(160px,0) scale(0.4);transition:transform 0.55s cubic-bezier(.2,.8,.3,1.05)">
+        <ellipse cx="140" cy="75" rx="36" ry="33" fill="#ffd84a" transform="rotate(-8,140,75)"/>
+        <ellipse cx="140" cy="75" rx="36" ry="33" fill="url(#kg2)" opacity=".25" transform="rotate(-8,140,75)"/>
+        <circle cx="128" cy="68" r="4.5" fill="#0a0a0a"/>
+        <circle cx="150" cy="69" r="4.5" fill="#0a0a0a"/>
+        <path d="M128 84 Q139 94 151 84" fill="none" stroke="#0a0a0a" stroke-width="4" stroke-linecap="round"/>
+      </g>
+      <!-- Heart — hidden until kiss -->
+      <text id="ks-heart" x="100" y="30" text-anchor="middle" font-size="28"
+            fill="#ff6b9d" opacity="0" style="transition:opacity 0.3s ease">♡</text>
+    </svg>
+    <div style="position:absolute;bottom:48px;font-family:'JetBrains Mono',monospace;
+                font-size:10px;letter-spacing:0.3em;color:rgba(255,255,255,.35);
+                text-transform:uppercase">tap to close</div>
+  `;
 
-  // Pull apart and resume breathing
-  setTimeout(() => {
-    blue.style.transform = '';
-    yellow.style.transform = '';
+  // Bounce blobs in after a frame
+  requestAnimationFrame(() => {
     setTimeout(() => {
-      blue.style.transition = '';
-      yellow.style.transition = '';
+      const kb = document.getElementById('ks-blue');
+      const ky = document.getElementById('ks-yellow');
+      if (kb) kb.style.transform = 'translate(0,0) scale(1)';
+      if (ky) ky.style.transform = 'translate(0,0) scale(1)';
+    }, 30);
+  });
+
+  // Kiss: lean together
+  setTimeout(() => {
+    const kb = document.getElementById('ks-blue');
+    const ky = document.getElementById('ks-yellow');
+    if (kb) { kb.style.transition = 'transform 0.3s cubic-bezier(.4,0,.2,1)'; kb.style.transform = 'translateX(22px) scale(1.06)'; }
+    if (ky) { ky.style.transition = 'transform 0.3s cubic-bezier(.4,0,.2,1)'; ky.style.transform = 'translateX(-18px) scale(1.04)'; }
+    // Heart appears
+    setTimeout(() => {
+      const kh = document.getElementById('ks-heart');
+      if (kh) {
+        kh.style.opacity = '1';
+        kh.style.transform = 'translateY(-10px)';
+        kh.style.transition = 'opacity 0.3s ease, transform 0.6s ease';
+      }
+    }, 200);
+  }, 650);
+
+  // Close on tap
+  overlay.addEventListener('click', () => {
+    overlay.style.background = 'rgba(14,12,24,0)';
+    setTimeout(() => {
+      overlay.remove();
       blue.style.animation = 'blobBreathe 3.8s ease-in-out infinite';
       yellow.style.animation = 'blobBreathe 3.8s ease-in-out 0.6s infinite';
       kissing = false;
     }, 350);
-  }, 700);
+  });
 }
 
 // ── INIT ──
