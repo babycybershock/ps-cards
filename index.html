@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>P+S Connection Cards</title>
 <!-- PWA / Home Screen -->
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -433,6 +433,121 @@
 
   .anim-deal { animation: cardDeal 0.45s cubic-bezier(.2,.8,.3,1.05) both; }
   .anim-fade { animation: fadeIn 0.3s ease both; }
+
+  /* ══════════════════════════════════
+     DESKTOP LAYOUT  (≥ 768px)
+  ══════════════════════════════════ */
+  @media (min-width: 768px) {
+
+    /* Header — more breathing room */
+    .header {
+      padding: 20px 48px 16px;
+    }
+
+    .header-eyebrow {
+      font-size: 9px;
+    }
+
+    .header-title {
+      font-size: 36px;
+      gap: 12px;
+    }
+
+    .header-title svg {
+      width: 54px;
+      height: 37px;
+    }
+
+    .mode-btn {
+      font-size: 10px;
+      padding: 8px 16px;
+    }
+
+    /* Filters — no horizontal scroll on desktop */
+    .filter-row {
+      flex-wrap: wrap;
+      overflow-x: visible;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .chip {
+      font-size: 9px;
+      padding: 6px 14px;
+    }
+
+    /* Draw mode — centred, larger card */
+    #draw-mode {
+      padding: 48px 40px 80px;
+      gap: 36px;
+    }
+
+    .btn-primary, .btn-ghost {
+      font-size: 11px;
+      padding: 12px 22px;
+    }
+
+    .draw-counter {
+      font-size: 10px;
+    }
+
+    /* Gallery — grid layout */
+    #gallery-mode {
+      padding: 32px 48px 80px;
+    }
+
+    .gallery-face-toggle {
+      padding: 0;
+      margin-bottom: 20px;
+    }
+
+    /* Kill swipe shelves on desktop — use grid instead */
+    .gallery-shelf {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 28px;
+      overflow-x: visible;
+      padding: 0;
+      scroll-snap-type: none;
+    }
+
+    .gallery-shelf-cell {
+      display: flex;
+      justify-content: center;
+    }
+
+    .gallery-group-header {
+      padding: 0;
+      margin-bottom: 16px;
+    }
+
+    .gallery-group-title {
+      font-size: 30px;
+    }
+
+    .gallery-group-meta {
+      font-size: 9px;
+      margin-top: 4px;
+    }
+
+    .gallery-group {
+      margin-bottom: 56px;
+    }
+
+    .gallery-flat-shelf {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 28px;
+      padding: 0;
+      align-items: start;
+    }
+
+    footer {
+      font-size: 9px;
+      padding: 40px;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -631,11 +746,12 @@ function buildCardHTML(cardData, isFlipped, sizeClass) {
   // Card dimensions based on size
   const isLarge = sizeClass === 'large';
   const isSmall = sizeClass === 'small';
-  const w = isLarge ? 'min(340px, 85vw)' : isSmall ? '140px' : 'min(220px, 43vw)';
-  const h = isLarge ? 'min(490px, calc(85vw * 1.43))' : isSmall ? '200px' : 'min(316px, calc(43vw * 1.43))';
-  const promptSize = isLarge ? 'clamp(18px, 4.5vw, 22px)' : isSmall ? '10px' : 'clamp(13px, 3vw, 16px)';
-  const metaSize = isLarge ? '9px' : '7px';
-  const glyphSize = isLarge ? '22px' : '14px';
+  const isDesktopNormal = sizeClass === 'desktop-normal';
+  const w = isLarge ? 'min(460px, 85vw)' : isSmall ? '140px' : isDesktopNormal ? '300px' : 'min(220px, 85vw)';
+  const h = isLarge ? 'min(660px, calc(85vw * 1.43))' : isSmall ? '200px' : isDesktopNormal ? '430px' : 'min(316px, calc(85vw * 1.43))';
+  const promptSize = isLarge ? 'clamp(20px, 4.5vw, 26px)' : isSmall ? '10px' : isDesktopNormal ? '18px' : 'clamp(15px, 3.5vw, 18px)';
+  const metaSize = isLarge ? '10px' : isDesktopNormal ? '9px' : '7px';
+  const glyphSize = isLarge ? '24px' : isDesktopNormal ? '18px' : '14px';
 
   // Sparkles (deterministic)
   const sparkleCount = cat.palette === 'sparkle' ? 10 : cat.palette === 'magenta' ? 8 : 6;
@@ -749,8 +865,10 @@ function renderDraw() {
   if (!card) return;
 
   const wrapper = document.getElementById('card-wrapper');
-  const w = Math.min(340, window.innerWidth * 0.85);
+  const isDesktop = window.innerWidth >= 768;
+  const w = isDesktop ? Math.min(460, window.innerWidth * 0.35) : Math.min(340, window.innerWidth * 0.85);
   const h = w * 1.43;
+  const drawSize = isDesktop ? 'large' : 'large';
 
   // ghosts
   const stack = document.getElementById('card-stack');
@@ -763,7 +881,7 @@ function renderDraw() {
     stack.insertBefore(g, wrapper);
   }
 
-  wrapper.innerHTML = `<div class="anim-deal">${buildCardHTML(card, drawFlipped, 'large')}</div>`;
+  wrapper.innerHTML = `<div class="anim-deal">${buildCardHTML(card, drawFlipped, drawSize)}</div>`;
   document.getElementById('btn-reveal').textContent = drawFlipped ? '✦ REVEAL' : '↻ FLIP';
   document.getElementById('draw-counter').textContent =
     String(drawPos + 1).padStart(2, '0') + ' / ' + String(drawPool.length).padStart(2, '0');
@@ -810,7 +928,8 @@ function renderGallery() {
     cards.forEach(c => {
       const isFlipped = faceDown ? !galleryFlipped.has(c.id) : galleryFlipped.has(c.id);
       const cell = document.createElement('div');
-      cell.innerHTML = buildCardHTML(c, isFlipped, 'normal');
+      const sz = window.innerWidth >= 768 ? 'desktop-normal' : 'normal';
+      cell.innerHTML = buildCardHTML(c, isFlipped, sz);
       shelf.appendChild(cell);
     });
     container.appendChild(shelf);
@@ -838,7 +957,8 @@ function renderGallery() {
       const isFlipped = faceDown ? !galleryFlipped.has(c.id) : galleryFlipped.has(c.id);
       const cell = document.createElement('div');
       cell.className = 'gallery-shelf-cell';
-      cell.innerHTML = buildCardHTML(c, isFlipped, 'normal');
+      const sz = window.innerWidth >= 768 ? 'desktop-normal' : 'normal';
+      cell.innerHTML = buildCardHTML(c, isFlipped, sz);
       shelf.appendChild(cell);
     });
 
@@ -923,6 +1043,16 @@ function buildCatFilters() {
 // ── INIT ──
 buildFilters();
 setMode('gallery');
+
+// Re-render on resize (responsive switch)
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (mode === 'gallery') renderGallery();
+    else renderDraw();
+  }, 150);
+});
 
 // ── SERVICE WORKER (offline cache) ──
 if ('serviceWorker' in navigator) {
