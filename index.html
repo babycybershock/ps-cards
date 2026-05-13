@@ -556,7 +556,7 @@
 <header class="header">
   <div class="header-top">
     <div class="header-title-group">
-      <div class="header-eyebrow">✦ A DECK OF 60 ✦</div>
+      <div class="header-eyebrow">✦ A DECK OF 72 ✦</div>
       <h1 class="header-title">
         <svg width="36" height="25" viewBox="0 0 64 44" style="overflow:visible;flex-shrink:0">
           <defs>
@@ -617,13 +617,13 @@
 <script>
 // ── DATA ──
 const CARD_CATEGORIES = {
-  curiosities: { name: 'Curiosities', label: 'CURIOSITY', glyph: '◇', palette: 'chrome', depth: 'light' },
-  us:          { name: 'Us',          label: 'MEMORY',    glyph: '✦', palette: 'sparkle', depth: 'light' },
-  gratitude:   { name: 'Gratitude',   label: 'APPRECIATION', glyph: '❋', palette: 'pearl', depth: 'medium' },
-  how_we_love: { name: 'How We Love', label: 'LOVE LANGUAGE', glyph: '✧', palette: 'lavender', depth: 'medium' },
-  dreams:      { name: 'Dreams & Future', label: 'HORIZON', glyph: '◈', palette: 'mist', depth: 'medium' },
-  desire:      { name: 'Desire & Intimacy', label: 'DESIRE', glyph: '✺', palette: 'magenta', depth: 'deep' },
-  healing:     { name: 'Healing & Growth', label: 'TENDER', glyph: '◐', palette: 'nebula', depth: 'deep' },
+  curiosities: { name: 'Curiosity', fullName: 'Curiosities', label: 'CURIOSITY', glyph: '◇', palette: 'chrome', depth: 'light' },
+  us:          { name: 'Memory', fullName: 'Us',          label: 'MEMORY',    glyph: '✦', palette: 'sparkle', depth: 'light' },
+  gratitude:   { name: 'Appreciation', fullName: 'Gratitude',   label: 'APPRECIATION', glyph: '❋', palette: 'pearl', depth: 'medium' },
+  how_we_love: { name: 'Love Language', fullName: 'How We Love', label: 'LOVE LANGUAGE', glyph: '✧', palette: 'lavender', depth: 'medium' },
+  dreams:      { name: 'Horizon', fullName: 'Dreams & Future', label: 'HORIZON', glyph: '◈', palette: 'mist', depth: 'medium' },
+  desire:      { name: 'Desire', fullName: 'Desire & Intimacy', label: 'DESIRE', glyph: '✺', palette: 'magenta', depth: 'deep' },
+  healing:     { name: 'Tender', fullName: 'Healing & Growth', label: 'TENDER', glyph: '◐', palette: 'nebula', depth: 'deep' },
 };
 
 const PALETTES = {
@@ -638,14 +638,14 @@ const PALETTES = {
 
 const CARD_PROMPTS = [
   { id:1,  category:'curiosities', prompt:'If I were a genre of music, what would I be — and which song of mine is on repeat right now?' },
-  { id:2,  category:'curiosities', prompt:'If we suddenly inherited a tiny shop in a city neither of us has been to, what would we sell?' },
+  { id:2,  category:'curiosities', prompt:'If we opened a tiny shop together somewhere unexpected, what would we sell?' },
   { id:3,  category:'curiosities', prompt:'What\u2019s a small, weird thing I do that you secretly find endearing?' },
   { id:4,  category:'curiosities', prompt:'If our love had a smell, a weather, and a time of day — what would they be?' },
   { id:5,  category:'curiosities', prompt:'If we swapped bodies for a day, what\u2019s the first thing you\u2019d do with mine?' },
   { id:6,  category:'curiosities', prompt:'If our relationship were a piece of furniture in someone else\u2019s house, what would it be — and where in the room?' },
   { id:7,  category:'curiosities', prompt:'What\u2019s a hobby or skill you\u2019d secretly love to try together that you\u2019ve never said out loud?' },
   { id:8,  category:'curiosities', prompt:'If we adopted an unusual animal tomorrow, what would it be — and what would we name it?' },
-  { id:9,  category:'us', prompt:'What\u2019s a moment between us that plays in your head like a film clip — and why that one?' },
+  { id:9,  category:'us', prompt:'What\u2019s a moment between us you keep coming back to?' },
   { id:10, category:'us', prompt:'When did you first know, quietly, that this was different?' },
   { id:11, category:'us', prompt:'Tell me about a time I made you laugh so hard you couldn\u2019t catch your breath.' },
   { id:12, category:'us', prompt:'What\u2019s a tiny ritual we\u2019ve built that you\u2019d miss the most if it disappeared?' },
@@ -661,21 +661,21 @@ const CARD_PROMPTS = [
   { id:22, category:'gratitude', prompt:'What\u2019s a season or chapter of us you\u2019re most grateful we made it through together?' },
   { id:23, category:'gratitude', prompt:'What\u2019s something I\u2019ve given you that didn\u2019t cost anything but means a lot?' },
   { id:24, category:'gratitude', prompt:'What\u2019s a way being with me has changed how you treat yourself?' },
-  { id:25, category:'how_we_love', prompt:'Of the ways I show love, which one reaches you the deepest — and why that one?' },
-  { id:26, category:'how_we_love', prompt:'What\u2019s the smallest gesture from me that lands the biggest in you?' },
+  { id:25, category:'how_we_love', prompt:'Of all the ways I show love, which one actually reaches you the deepest?' },
+  { id:26, category:'how_we_love', prompt:'What\u2019s the smallest thing I do that means the most to you?' },
   { id:27, category:'how_we_love', prompt:'When do you feel most seen by me — and when do you feel most invisible?' },
   { id:28, category:'how_we_love', prompt:'What\u2019s a way you\u2019d like to be loved that you\u2019ve never asked for out loud?' },
   { id:29, category:'how_we_love', prompt:'What\u2019s something you wish I asked you about more often?' },
   { id:30, category:'how_we_love', prompt:'What\u2019s one thing this week I could do for you that\u2019d make you smile?' },
-  { id:31, category:'how_we_love', prompt:'How do you most naturally try to show me you love me — and do you think it lands the way you mean it?' },
+  { id:31, category:'how_we_love', prompt:'What’s your most natural way of showing me love — and do you think it’s actually what I need?' },
   { id:32, category:'how_we_love', prompt:'Where do you most need me to show up gently, and where do you need me to show up boldly?' },
-  { id:33, category:'dreams', prompt:'What do you wish to share more of with me — that we haven\u2019t made room for yet?' },
-  { id:34, category:'dreams', prompt:'If we drew a map of the next five years together, what\u2019s on it that we haven\u2019t said out loud?' },
+  { id:33, category:'dreams', prompt:'What\u2019s something you\u2019d love us to share more of together?' },
+  { id:34, category:'dreams', prompt:'If we drew a map of the next five years together, what would be on it that we\u2019ve never said out loud?' },
   { id:35, category:'dreams', prompt:'What kind of older couple do you hope we become — and what would we be doing on a Tuesday?' },
   { id:36, category:'dreams', prompt:'What\u2019s a version of us you can almost see, but we\u2019d have to be brave to reach?' },
   { id:37, category:'dreams', prompt:'What\u2019s a tradition you\u2019d love us to start that nobody else gets?' },
-  { id:38, category:'dreams', prompt:'If we packed everything we owned tomorrow, where would you most want us to land — and what would the morning look like there?' },
-  { id:39, category:'dreams', prompt:'What\u2019s a dream of yours I could help carry better than I do right now?' },
+  { id:38, category:'dreams', prompt:'If we packed everything we owned tomorrow, where would you want us to end up — and what would the morning look like there?' },
+  { id:39, category:'dreams', prompt:'What\u2019s a dream of yours I could support more than I do?' },
   { id:40, category:'dreams', prompt:'What do you hope our home feels like to other people walking into it?' },
   { id:41, category:'desire', prompt:'What\u2019s something you\u2019ve wanted to ask for in our intimacy but haven\u2019t found the words for?' },
   { id:42, category:'desire', prompt:'When do you feel most wanted by me — and what makes you feel it?' },
@@ -685,10 +685,10 @@ const CARD_PROMPTS = [
   { id:46, category:'desire', prompt:'When have you felt most safely undone with me — and what made it possible?' },
   { id:47, category:'desire', prompt:'Is there something about your desire you\u2019re still learning, and would you let me learn it with you?' },
   { id:48, category:'desire', prompt:'What\u2019s the difference, for you, between sex with me and being truly intimate with me?' },
-  { id:49, category:'healing', prompt:'What is a pain in me you wish you could heal?' },
+  { id:49, category:'healing', prompt:'What’s a pain in me you wish you could take away?' },
   { id:50, category:'healing', prompt:'What\u2019s something you\u2019re afraid to need from me — and what made it scary to need?' },
   { id:51, category:'healing', prompt:'Where in our relationship are you growing right now, and where does it ache?' },
-  { id:52, category:'healing', prompt:'What\u2019s a story from before me that still echoes in how I show up with you?' },
+  { id:52, category:'healing', prompt:'What\u2019s a story from before me that still shapes how you are with me?' },
   { id:53, category:'healing', prompt:'If you could write a kinder rule for us than the one we\u2019re unconsciously following, what would it say?' },
   { id:54, category:'healing', prompt:'What\u2019s an apology I owe you that you\u2019d rather hear than collect?' },
   { id:55, category:'healing', prompt:'When you imagine the part of you that\u2019s most afraid in our relationship — what does it want me to know?' },
@@ -697,6 +697,19 @@ const CARD_PROMPTS = [
   { id:58, category:'healing', prompt:'What\u2019s something you forgive me for over and over without saying so?' },
   { id:59, category:'healing', prompt:'What\u2019s a part of yourself you\u2019ve only let me see — and what made it feel safe enough?' },
   { id:60, category:'healing', prompt:'If we could only keep one promise to each other forever, which one would you want it to be?' },
+
+  { id:61, category:'curiosities', prompt:'If our relationship had a mascot, what would it be and why?' },
+  { id:62, category:'curiosities', prompt:'What\u2019s something you overheard, saw, or stumbled on that made you think of me \u2014 and never told me about?' },
+  { id:63, category:'us', prompt:'What\u2019s a moment from early on that you didn\u2019t know mattered until much later?' },
+  { id:64, category:'us', prompt:'When did you last feel quietly proud of us \u2014 not for anything big, just for how we were together?' },
+  { id:65, category:'gratitude', prompt:'What\u2019s something about me that made your life easier in a way you didn\u2019t expect?' },
+  { id:66, category:'gratitude', prompt:'What\u2019s a version of yourself you became because of me \u2014 that you\u2019re glad exists?' },
+  { id:67, category:'how_we_love', prompt:'When you\u2019re struggling and don\u2019t say so, what do you secretly hope I\u2019ll notice?' },
+  { id:68, category:'how_we_love', prompt:'Is there a kind of love you\u2019ve been quietly craving that you\u2019re not sure I even know how to give?' },
+  { id:69, category:'dreams', prompt:'What\u2019s something you want to do before you\u2019re old that we haven\u2019t talked about yet?' },
+  { id:70, category:'dreams', prompt:'What\u2019s a quieter, smaller version of your biggest dream that you\u2019d be just as happy with?' },
+  { id:71, category:'desire', prompt:'What\u2019s something about our physical connection that\u2019s changed over time \u2014 and how do you feel about that?' },
+  { id:72, category:'desire', prompt:'What makes you feel most like yourself when we\u2019re intimate \u2014 and do you get enough of that?' },
 ];
 
 // ── STATE ──
@@ -947,7 +960,7 @@ function renderGallery() {
     header.className = 'gallery-group-header';
     header.innerHTML = `
       <div class="gallery-group-title">${cat.name}</div>
-      <div class="gallery-group-meta">${cat.label} · ${groups[key].length} CARDS · ${cat.depth.toUpperCase()}</div>
+      <div class="gallery-group-meta">${cat.fullName || cat.name} · ${groups[key].length} CARDS · ${cat.depth.toUpperCase()}</div>
     `;
 
     const shelf = document.createElement('div');
