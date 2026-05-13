@@ -293,11 +293,12 @@
     mix-blend-mode: overlay;
   }
 
-  .card-orb {
+.card-orb {
     position: absolute;
     border-radius: 50%;
     filter: blur(10px);
     pointer-events: none;
+    clip-path: inset(0);
   }
 
   /* ── DRAW CONTROLS ── */
@@ -844,7 +845,7 @@ function buildCardHTML(cardData, isFlipped, sizeClass) {
            }
          ">
       <!-- Front face -->
-      <div class="card-face card-front" style="background:${pal.bg}">
+      <div class="card-face card-front" style="background:${pal.bg};overflow:hidden">
         <svg width="0" height="0" style="position:absolute">
           <defs><filter id="sp-blur-${cardData.id}"><feGaussianBlur stdDeviation="2"/></filter></defs>
         </svg>
