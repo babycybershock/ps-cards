@@ -830,7 +830,7 @@ function buildCardHTML(cardData, isFlipped, sizeClass) {
   return `
     <div style="perspective:1200px;-webkit-perspective:1200px">
     <div class="card ${isFlipped ? 'flipped' : ''}" 
-         style="width:${w};height:${h};border:0.5px solid ${pal.border};${pal.glow ? 'box-shadow:' + pal.glow + ',0 16px 50px rgba(0,0,0,.4)' : ''}"
+         style="width:${w};height:${h};border:0.5px solid ${pal.border};box-shadow:0 16px 50px rgba(0,0,0,.4)"
          onclick="
            const wasFlipped = this.classList.contains('flipped');
            this.classList.toggle('flipped');
